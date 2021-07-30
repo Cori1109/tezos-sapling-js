@@ -1,6 +1,6 @@
 import * as sapling from "@airgap/sapling-wasm"
 
-import BigNumber from "bignumber.js"
+import BigNumber from "../../../../dependencies/src/bignumber.js-9.0.0/bignumber"
 import { IAirGapTransaction } from "../../../../interfaces/IAirGapTransaction"
 import { flattenArray } from "../../../../utils/array"
 import { stripHexPrefix } from "../../../../utils/hex"
