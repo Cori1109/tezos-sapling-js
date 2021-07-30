@@ -1,0 +1,16 @@
+{
+  "name": "airgap-sapling-playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@airgap/sapling-wasm": "^0.0.6",
+    "airgap-coin-lib": "^0.9.14",
+    "bignumber.js": "^9.0.1"
+  }
+}
