@@ -9,8 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@airgap/sapling-wasm": "^0.0.6",
-    "airgap-coin-lib": "^0.9.14",
-    "bignumber.js": "^9.0.1"
+    "@temple-wallet/sapling-wasm": "^0.0.6",
+    "libsodium-wrappers": "0.7.6"
   }
 }

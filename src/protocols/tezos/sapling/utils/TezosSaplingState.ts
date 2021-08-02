@@ -1,4 +1,4 @@
-import * as sapling from "@airgap/sapling-wasm"
+import * as sapling from "@temple-wallet/sapling-wasm"
 
 import { LazyAsync } from "../../../../data/Lazy"
 import BigNumber from "../../../../dependencies/src/bignumber.js-9.0.0/bignumber"

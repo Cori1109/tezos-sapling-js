@@ -6,7 +6,7 @@ import {
   prepareSpendDescription,
   preparePartialOutputDescription,
   createBindingSignature,
-} from "@airgap/sapling-wasm"
+} from "@temple-wallet/sapling-wasm"
 
 export class SaplingWasmService {
   constructor() {}

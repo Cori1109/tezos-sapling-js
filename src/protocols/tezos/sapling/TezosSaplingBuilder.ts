@@ -1,4 +1,4 @@
-import * as sapling from "@airgap/sapling-wasm"
+import * as sapling from "@temple-wallet/sapling-wasm"
 import * as sodium from "libsodium-wrappers"
 
 import BigNumber from "../../../dependencies/src/bignumber.js-9.0.0/bignumber"
@@ -320,10 +320,7 @@ export class TezosSaplingBuilder
       .encodeTransaction(forgedTransaction)
       .toString("hex")
 
-    return transaction.callParameters.replace(
-      TezosSaplingBuilder.TRANSACTION_PLACEHOLDER,
-      signed
-    )
+    return signed
   }
 
   public async getTransactionDetails(
