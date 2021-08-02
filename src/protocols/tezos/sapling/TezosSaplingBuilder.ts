@@ -53,10 +53,8 @@ import { TezosSaplingState } from "./utils/TezosSaplingState"
 
 import { TezosTransactionParameters } from "../types/operations/Transaction"
 
-export class TezosSaplingBuilder
-  extends NonExtendedProtocol
-  implements ICoinProtocol
-{
+export class TezosSaplingBuilder extends NonExtendedProtocol {
+  // implements ICoinProtocol
   private static readonly TRANSACTION_PLACEHOLDER: string =
     "TRANSACTION_PLACEHOLDER"
 
@@ -231,14 +229,13 @@ export class TezosSaplingBuilder
   }
 
   public async getTransactionsFromPublicKey(
+    contractAddress: string,
     publicKey: string,
     limit: number,
     cursor?: TezosSaplingTransactionCursor
   ): Promise<TezosSaplingTransactionResult> {
     const saplingStateDiff: TezosSaplingStateDiff =
-      await this.nodeClient.getSaplingStateDiff(
-        this.options.config.contractAddress
-      )
+      await this.nodeClient.getSaplingStateDiff(contractAddress)
     const page: number = cursor?.page ?? 0
 
     const adjustedLimit: number = limit * 2
@@ -452,11 +449,12 @@ export class TezosSaplingBuilder
     return filtered.length > 0 ? filtered : airGapTxs
   }
 
-  public async getBalanceOfPublicKey(publicKey: string): Promise<string> {
+  public async getBalanceOfPublicKey(
+    contractAddress: string,
+    publicKey: string
+  ): Promise<string> {
     const saplingStateDiff: TezosSaplingStateDiff =
-      await this.nodeClient.getSaplingStateDiff(
-        this.options.config.contractAddress
-      )
+      await this.nodeClient.getSaplingStateDiff(contractAddress)
     const unspends: TezosSaplingInput[] = await this.bookkeeper.getUnspends(
       publicKey,
       saplingStateDiff.commitments_and_ciphertexts,
@@ -478,11 +476,12 @@ export class TezosSaplingBuilder
   }
 
   public async estimateMaxTransactionValueFromPublicKey(
+    contractAddress: string,
     publicKey: string,
     recipients: string[],
     fee?: string | undefined
   ): Promise<string> {
-    return this.getBalanceOfPublicKey(publicKey)
+    return this.getBalanceOfPublicKey(contractAddress, publicKey)
   }
 
   public async prepareTransactionFromPublicKey(
@@ -571,6 +570,7 @@ export class TezosSaplingBuilder
   }
 
   public async prepareShieldTransaction(
+    contractAddress: string,
     publicKey: string,
     recipient: string,
     value: string,
@@ -585,9 +585,7 @@ export class TezosSaplingBuilder
 
     const [saplingStateDiff, chainId]: [TezosSaplingStateDiff, string] =
       await Promise.all([
-        this.nodeClient.getSaplingStateDiff(
-          this.options.config.contractAddress
-        ),
+        this.nodeClient.getSaplingStateDiff(contractAddress),
         this.nodeClient.getChainId(),
       ])
 
@@ -615,6 +613,7 @@ export class TezosSaplingBuilder
   }
 
   public async prepareUnshieldTransaction(
+    contractAddress: string,
     viewingKey: string,
     recipient: string,
     value: string,
@@ -628,9 +627,7 @@ export class TezosSaplingBuilder
 
     const [stateDiff, chainId]: [TezosSaplingStateDiff, string] =
       await Promise.all([
-        this.nodeClient.getSaplingStateDiff(
-          this.options.config.contractAddress
-        ),
+        this.nodeClient.getSaplingStateDiff(contractAddress),
         this.nodeClient.getChainId(),
       ])
 
@@ -658,6 +655,7 @@ export class TezosSaplingBuilder
   }
 
   public async prepareSaplingTransaction(
+    contractAddress: string,
     viewingKey: string,
     recipient: string,
     value: string,
@@ -680,9 +678,7 @@ export class TezosSaplingBuilder
 
     const [stateDiff, chainId]: [TezosSaplingStateDiff, string] =
       await Promise.all([
-        this.nodeClient.getSaplingStateDiff(
-          this.options.config.contractAddress
-        ),
+        this.nodeClient.getSaplingStateDiff(contractAddress),
         this.nodeClient.getChainId(),
       ])
 
