@@ -1,18 +1,19 @@
-import * as createHash from '../dependencies/src/create-hash-1.2.0/index'
+import * as createHash from "../dependencies/src/create-hash-1.2.0/index"
 
-import { ProtocolBlockExplorer } from './ProtocolBlockExplorer'
+import { ProtocolBlockExplorer } from "./ProtocolBlockExplorer"
 
 const sha256hashShort: (input: string) => string = (input: string): string => {
-  const hash = createHash('sha256')
+  const hash = createHash("sha256")
   hash.update(input)
 
-  return hash.digest('base64').slice(0, 10)
+  return hash.digest("base64").slice(0, 10)
 }
 
 export enum NetworkType {
-  MAINNET = 'MAINNET',
-  TESTNET = 'TESTNET',
-  CUSTOM = 'CUSTOM'
+  MAINNET = "MAINNET",
+  TESTNET = "TESTNET",
+  CUSTOM = "CUSTOM",
+  MOCKUP = "MOCKUP",
 }
 
 export abstract class ProtocolNetwork<T = unknown> {

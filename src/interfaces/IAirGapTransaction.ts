@@ -2,6 +2,7 @@ import { ProtocolNetwork } from "../utils/ProtocolNetwork"
 import { ProtocolSymbols } from "../utils/ProtocolSymbols"
 
 import { TezosTransactionCursor } from "./../protocols/tezos/types/TezosTransactionCursor"
+import { TezosSaplingTransactionCursor } from "./../protocols/tezos/types/sapling/TezosSaplingTransactionCursor"
 
 export enum AirGapTransactionType {
   SPEND = "Spend Transaction",
@@ -36,7 +37,9 @@ export interface IAirGapTransaction {
   transactionDetails?: any
 }
 
-export type IProtocolTransactionCursor = TezosTransactionCursor
+export type IProtocolTransactionCursor =
+  | TezosTransactionCursor
+  | TezosSaplingTransactionCursor
 
 export interface IAirGapTransactionResult {
   transactions: IAirGapTransaction[]
