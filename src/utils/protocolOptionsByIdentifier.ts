@@ -49,8 +49,8 @@ const getProtocolOptionsByIdentifier: (
         network
           ? (network as TezosProtocolNetwork)
           : new TezosProtocolNetwork(
-              "Florencenet",
               NetworkType.TESTNET,
+              "Florencenet",
               "https://tezos-florencenet-node.prod.gke.papers.tech"
             ),
         new TezosShieldedTezProtocolConfig()

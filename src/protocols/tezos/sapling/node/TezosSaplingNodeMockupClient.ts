@@ -4,13 +4,10 @@ import { ITezosSaplingNodeClient } from "./ITezosSaplingNodeClient"
 import { spawnSync } from "child_process"
 
 export class TezosSaplingNodeMockupClient implements ITezosSaplingNodeClient {
-  constructor(
-    private readonly rpcUrl: string,
-    private readonly contractAddress: string
-  ) {}
+  constructor() {}
 
   public async getSaplingStateDiff(
-    contractAddress = this.contractAddress
+    contractAddress
   ): Promise<TezosSaplingStateDiff> {
     const method = "GET"
     const url = `/chains/main/blocks/head/context/contracts/${contractAddress}/single_sapling_get_diff`

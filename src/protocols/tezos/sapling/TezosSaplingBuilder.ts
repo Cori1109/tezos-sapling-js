@@ -43,6 +43,7 @@ import { TezosWrappedOperation } from "../types/TezosWrappedOperation"
 
 import { ITezosSaplingNodeClient } from "./node/ITezosSaplingNodeClient"
 import { TezosSaplingNodeMockupClient } from "./node/TezosSaplingNodeMockupClient"
+import { TezosSaplingNodeClient } from "./node/TezosSaplingNodeClient"
 import { TezosSaplingAddress } from "./TezosSaplingAddress"
 import { TezosSaplingCryptoClient } from "./TezosSaplingCryptoClient"
 import { TezosSaplingProtocolOptions } from "./TezosSaplingProtocolOptions"
@@ -52,6 +53,7 @@ import { TezosSaplingForger } from "./utils/TezosSaplingForger"
 import { TezosSaplingState } from "./utils/TezosSaplingState"
 
 import { TezosTransactionParameters } from "../types/operations/Transaction"
+import { NetworkType } from "../../../utils/ProtocolNetwork"
 
 export class TezosSaplingBuilder extends NonExtendedProtocol {
   // implements ICoinProtocol
@@ -117,10 +119,12 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
     this.cryptoClient = new TezosSaplingCryptoClient(
       this.tezosProtocol.cryptoClient
     )
-    this.nodeClient = new TezosSaplingNodeMockupClient(
-      this.options.network.rpcUrl,
-      this.options.config.contractAddress
-    )
+
+    if (this.options.network.type == NetworkType.MOCKUP) {
+      this.nodeClient = new TezosSaplingNodeMockupClient()
+    } else {
+      this.nodeClient = new TezosSaplingNodeClient(this.options.network.rpcUrl)
+    }
 
     this.contract = new TezosContract(
       this.options.config.contractAddress,
