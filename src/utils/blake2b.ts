@@ -1,4 +1,5 @@
-import blake2b = require('../dependencies/src/blake2b-6268e6dd678661e0acc4359e9171b97eb1ebf8ac')
+//@ts-ignore
+import blake2b from "blake2b"
 
 import { addHexPrefix, hexToBytes } from './hex'
 

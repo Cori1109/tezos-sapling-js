@@ -22,7 +22,7 @@ export class CoinlibError extends Error {
 }
 
 export class CoinlibAssertionError extends Error {
-  constructor(public domain: Domain, public code: string, public expected: string, public actual) {
+  constructor(public domain: Domain, public code: string, public expected: string, public actual: any) {
     super(`${domain}(${code}): expected ${expected} but got ${actual}.`)
   }
 }

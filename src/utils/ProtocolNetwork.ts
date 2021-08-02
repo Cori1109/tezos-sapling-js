@@ -1,4 +1,4 @@
-import * as createHash from "../dependencies/src/create-hash-1.2.0/index"
+import createHash from "create-hash"
 
 import { ProtocolBlockExplorer } from "./ProtocolBlockExplorer"
 

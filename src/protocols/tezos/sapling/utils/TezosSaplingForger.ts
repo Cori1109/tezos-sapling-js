@@ -5,7 +5,7 @@ import {
   SaplingUnsignedSpendDescription,
 } from "@temple-wallet/sapling-wasm"
 
-import BigNumber from "../../../../dependencies/src/bignumber.js-9.0.0/bignumber"
+import BigNumber from "bignumber.js"
 import { blake2bAsBytes } from "../../../../utils/blake2b"
 import { TezosSaplingCiphertext } from "../../types/sapling/TezosSaplingCiphertext"
 import { TezosSaplingInput } from "../../types/sapling/TezosSaplingInput"

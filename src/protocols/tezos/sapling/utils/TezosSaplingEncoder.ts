@@ -1,4 +1,4 @@
-import BigNumber from "../../../../dependencies/src/bignumber.js-9.0.0/bignumber"
+import BigNumber from "bignumber.js"
 import { toHexBuffer } from "../../../../utils/hex"
 import { TezosSaplingCiphertext } from "../../types/sapling/TezosSaplingCiphertext"
 import {

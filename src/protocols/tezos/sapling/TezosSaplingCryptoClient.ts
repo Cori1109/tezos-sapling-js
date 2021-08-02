@@ -2,7 +2,7 @@ import * as sapling from "@temple-wallet/sapling-wasm"
 import { SaplingPartialOutputDescription } from "@temple-wallet/sapling-wasm"
 import * as sodium from "libsodium-wrappers"
 
-import BigNumber from "../../../dependencies/src/bignumber.js-9.0.0/bignumber"
+import BigNumber from "bignumber.js"
 import { blake2bAsBytes } from "../../../utils/blake2b"
 import { toHexBuffer } from "../../../utils/hex"
 import { Ed25519CryptoClient } from "../../Ed25519CryptoClient"

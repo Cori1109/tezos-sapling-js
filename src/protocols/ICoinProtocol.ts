@@ -1,4 +1,4 @@
-import { CryptoClient } from '..'
+import { CryptoClient } from './CryptoClient'
 import { IAirGapSignedTransaction } from '../interfaces/IAirGapSignedTransaction'
 import { AirGapTransactionStatus, IAirGapTransaction, IAirGapTransactionResult } from '../interfaces/IAirGapTransaction'
 import { SignedTransaction } from '../serializer/schemas/definitions/signed-transaction'

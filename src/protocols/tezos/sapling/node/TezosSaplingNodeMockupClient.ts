@@ -7,7 +7,7 @@ export class TezosSaplingNodeMockupClient implements ITezosSaplingNodeClient {
   constructor() {}
 
   public async getSaplingStateDiff(
-    contractAddress
+    contractAddress: string
   ): Promise<TezosSaplingStateDiff> {
     const method = "GET"
     const url = `/chains/main/blocks/head/context/contracts/${contractAddress}/single_sapling_get_diff`

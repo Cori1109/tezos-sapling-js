@@ -1,75 +1,101 @@
-import axios, { AxiosError, AxiosResponse } from '../../../dependencies/src/axios-0.19.0/index'
-import BigNumber from '../../../dependencies/src/bignumber.js-9.0.0/bignumber'
-import { BalanceError, InvalidValueError, NetworkError, NotFoundError, NotImplementedError, OperationFailedError } from '../../../errors'
-import { Domain } from '../../../errors/coinlib-error'
-import { RawTezosTransaction } from '../../../serializer/types'
-import { ProtocolSymbols, SubProtocolSymbols } from '../../../utils/ProtocolSymbols'
-import { FeeDefaults } from '../../ICoinProtocol'
-import { ICoinSubProtocol, SubProtocolType } from '../../ICoinSubProtocol'
-import { TezosProtocol } from '../TezosProtocol'
-import { TezosOperation } from '../types/operations/TezosOperation'
-import { TezosTransactionOperation } from '../types/operations/Transaction'
-import { TezosOperationType } from '../types/TezosOperationType'
-import { TezosWrappedOperation } from '../types/TezosWrappedOperation'
-import { TezosKtAddress } from './TezosKtAddress'
-import { TezosUtils } from '../TezosUtils'
+import axios, { AxiosError, AxiosResponse } from "axios"
+import BigNumber from "bignumber.js"
+import {
+  BalanceError,
+  InvalidValueError,
+  NetworkError,
+  NotFoundError,
+  NotImplementedError,
+  OperationFailedError,
+} from "../../../errors"
+import { Domain } from "../../../errors/coinlib-error"
+import { RawTezosTransaction } from "../../../serializer/types"
+import {
+  ProtocolSymbols,
+  SubProtocolSymbols,
+} from "../../../utils/ProtocolSymbols"
+import { FeeDefaults } from "../../ICoinProtocol"
+import { ICoinSubProtocol, SubProtocolType } from "../../ICoinSubProtocol"
+import { TezosProtocol } from "../TezosProtocol"
+import { TezosOperation } from "../types/operations/TezosOperation"
+import { TezosTransactionOperation } from "../types/operations/Transaction"
+import { TezosOperationType } from "../types/TezosOperationType"
+import { TezosWrappedOperation } from "../types/TezosWrappedOperation"
+import { TezosKtAddress } from "./TezosKtAddress"
+import { TezosUtils } from "../TezosUtils"
 
 export class TezosKtProtocol extends TezosProtocol implements ICoinSubProtocol {
   public identifier: ProtocolSymbols = SubProtocolSymbols.XTZ_KT
   public isSubProtocol: boolean = true
   public subProtocolType: SubProtocolType = SubProtocolType.ACCOUNT
-  public addressValidationPattern: string = '^(tz1|KT1)[1-9A-Za-z]{33}$'
+  public addressValidationPattern: string = "^(tz1|KT1)[1-9A-Za-z]{33}$"
   public migrationFee: BigNumber = new BigNumber(5000)
 
-  public async getAddressFromPublicKey(publicKey: string, addressIndex?: number): Promise<TezosKtAddress> {
+  public async getAddressFromPublicKey(
+    publicKey: string,
+    addressIndex?: number
+  ): Promise<TezosKtAddress> {
     const addresses = await this.getAddressesFromPublicKey(publicKey)
     const index = addressIndex ?? 0
     if (index >= addresses.length) {
-      throw new NotFoundError(Domain.TEZOS, 'No address for the specified index exists')
+      throw new NotFoundError(
+        Domain.TEZOS,
+        "No address for the specified index exists"
+      )
     }
 
     return addresses[index]
   }
 
-  public async getAddressesFromPublicKey(publicKey: string): Promise<TezosKtAddress[]> {
-    const tz1address: string = (await super.getAddressFromPublicKey(publicKey)).getValue()
+  public async getAddressesFromPublicKey(
+    publicKey: string
+  ): Promise<TezosKtAddress[]> {
+    const tz1address: string = (
+      await super.getAddressFromPublicKey(publicKey)
+    ).getValue()
     const getRequestBody = (field: string, set: string) => {
       return {
-        fields: ['originated_contracts'],
+        fields: ["originated_contracts"],
         predicates: [
           {
             field,
-            operation: 'eq',
+            operation: "eq",
             set: [tz1address],
-            inverse: false
+            inverse: false,
           },
           {
-            field: 'kind',
-            operation: 'eq',
+            field: "kind",
+            operation: "eq",
             set: [set],
-            inverse: false
+            inverse: false,
           },
           {
-            field: 'status',
-            operation: 'eq',
-            set: ['applied'],
-            inverse: false
-          }
-        ]
+            field: "status",
+            operation: "eq",
+            set: ["applied"],
+            inverse: false,
+          },
+        ],
       }
     }
     const { data } = await axios.post(
       `${this.baseApiUrl}/v2/data/tezos/mainnet/operations`,
-      getRequestBody('manager_pubkey', 'origination'),
+      getRequestBody("manager_pubkey", "origination"),
       {
-        headers: this.headers
+        headers: this.headers,
       }
     )
-    const ktAddresses: string[] = data.map((origination: { originated_contracts: string }) => {
-      return origination.originated_contracts
-    })
+    const ktAddresses: string[] = data.map(
+      (origination: { originated_contracts: string }) => {
+        return origination.originated_contracts
+      }
+    )
 
-    return Promise.all(ktAddresses.reverse().map((ktAddress: string) => TezosKtAddress.from(ktAddress)))
+    return Promise.all(
+      ktAddresses
+        .reverse()
+        .map((ktAddress: string) => TezosKtAddress.from(ktAddress))
+    )
   }
 
   public async estimateMaxTransactionValueFromPublicKey(
@@ -93,7 +119,7 @@ export class TezosKtProtocol extends TezosProtocol implements ICoinSubProtocol {
     return {
       low: fee,
       medium: fee,
-      high: fee
+      high: fee,
     }
   }
 
@@ -104,15 +130,31 @@ export class TezosKtProtocol extends TezosProtocol implements ICoinSubProtocol {
     _fee: string,
     _data?: { addressIndex: number }
   ): Promise<RawTezosTransaction> {
-    throw new NotImplementedError(Domain.TEZOS, 'sending funds from KT addresses is not supported. Please use the migration feature.')
+    throw new NotImplementedError(
+      Domain.TEZOS,
+      "sending funds from KT addresses is not supported. Please use the migration feature."
+    )
   }
 
-  public async originate(publicKey: string, delegate?: string, amount?: BigNumber): Promise<RawTezosTransaction> {
-    throw new NotImplementedError(Domain.TEZOS, 'Originate operation not supported for KT Addresses')
+  public async originate(
+    publicKey: string,
+    delegate?: string,
+    amount?: BigNumber
+  ): Promise<RawTezosTransaction> {
+    throw new NotImplementedError(
+      Domain.TEZOS,
+      "Originate operation not supported for KT Addresses"
+    )
   }
 
-  public async delegate(publicKey: string, delegate?: string): Promise<RawTezosTransaction> {
-    throw new NotImplementedError(Domain.TEZOS, 'Delegate operation not supported for KT Addresses')
+  public async delegate(
+    publicKey: string,
+    delegate?: string
+  ): Promise<RawTezosTransaction> {
+    throw new NotImplementedError(
+      Domain.TEZOS,
+      "Delegate operation not supported for KT Addresses"
+    )
   }
 
   public async migrateKtContract(
@@ -122,24 +164,37 @@ export class TezosKtProtocol extends TezosProtocol implements ICoinSubProtocol {
     binaryTransaction: string
   }> {
     let counter: BigNumber = new BigNumber(1)
-    let branch: string = ''
+    let branch: string = ""
 
     const operations: TezosOperation[] = []
 
-    const address: string = (await super.getAddressFromPublicKey(publicKey)).getValue()
+    const address: string = (
+      await super.getAddressFromPublicKey(publicKey)
+    ).getValue()
 
-    const balanceOfManager: BigNumber = new BigNumber(await super.getBalanceOfAddresses([address]))
+    const balanceOfManager: BigNumber = new BigNumber(
+      await super.getBalanceOfAddresses([address])
+    )
 
     if (balanceOfManager.isLessThan(this.migrationFee)) {
-      throw new BalanceError(Domain.TEZOS, 'not enough balance on tz address for fee')
+      throw new BalanceError(
+        Domain.TEZOS,
+        "not enough balance on tz address for fee"
+      )
     }
 
-    const amount: BigNumber = new BigNumber(await this.getBalanceOfAddresses([destinationContract]))
+    const amount: BigNumber = new BigNumber(
+      await this.getBalanceOfAddresses([destinationContract])
+    )
 
     const results: AxiosResponse[] | void = await Promise.all([
-      axios.get(`${this.jsonRPCAPI}/chains/main/blocks/head/context/contracts/${address}/counter`),
+      axios.get(
+        `${this.jsonRPCAPI}/chains/main/blocks/head/context/contracts/${address}/counter`
+      ),
       axios.get(`${this.jsonRPCAPI}/chains/main/blocks/head/hash`),
-      axios.get(`${this.jsonRPCAPI}/chains/main/blocks/head/context/contracts/${address}/manager_key`)
+      axios.get(
+        `${this.jsonRPCAPI}/chains/main/blocks/head/context/contracts/${address}/manager_key`
+      ),
     ]).catch((error) => {
       if (error.response && error.response.status !== 404) {
         throw new NetworkError(Domain.TEZOS, error as AxiosError)
@@ -153,15 +208,20 @@ export class TezosKtProtocol extends TezosProtocol implements ICoinSubProtocol {
 
     // check if we have revealed the address already
     if (!accountManager) {
-      operations.push(await this.createRevealOperation(counter, publicKey, address))
+      operations.push(
+        await this.createRevealOperation(counter, publicKey, address)
+      )
       counter = counter.plus(1)
     }
 
-    let hexDestination: string = this.checkAndRemovePrefixToHex(address, TezosUtils.tezosPrefixes.tz1)
+    let hexDestination: string = this.checkAndRemovePrefixToHex(
+      address,
+      TezosUtils.tezosPrefixes.tz1
+    )
 
     if (hexDestination.length > 42) {
       // must be less or equal 21 bytes
-      throw new InvalidValueError(Domain.TEZOS, 'provided source is invalid')
+      throw new InvalidValueError(Domain.TEZOS, "provided source is invalid")
     }
 
     while (hexDestination.length !== 42) {
@@ -173,36 +233,36 @@ export class TezosKtProtocol extends TezosProtocol implements ICoinSubProtocol {
     const spendOperation: TezosTransactionOperation = {
       kind: TezosOperationType.TRANSACTION,
       fee: this.migrationFee.toFixed(),
-      gas_limit: '26283',
-      storage_limit: '0',
-      amount: '0',
+      gas_limit: "26283",
+      storage_limit: "0",
+      amount: "0",
       counter: counter.toFixed(),
       destination: destinationContract,
       source: address,
       parameters: {
-        entrypoint: 'do',
+        entrypoint: "do",
         value: [
-          { prim: 'DROP' },
-          { prim: 'NIL', args: [{ prim: 'operation' }] },
+          { prim: "DROP" },
+          { prim: "NIL", args: [{ prim: "operation" }] },
           {
-            prim: 'PUSH',
+            prim: "PUSH",
             args: [
-              { prim: 'key_hash' },
+              { prim: "key_hash" },
               {
-                bytes: hexDestination
-              }
-            ]
+                bytes: hexDestination,
+              },
+            ],
           },
-          { prim: 'IMPLICIT_ACCOUNT' },
+          { prim: "IMPLICIT_ACCOUNT" },
           {
-            prim: 'PUSH',
-            args: [{ prim: 'mutez' }, { int: amount.toString(10) }]
+            prim: "PUSH",
+            args: [{ prim: "mutez" }, { int: amount.toString(10) }],
           },
-          { prim: 'UNIT' },
-          { prim: 'TRANSFER_TOKENS' },
-          { prim: 'CONS' }
-        ]
-      }
+          { prim: "UNIT" },
+          { prim: "TRANSFER_TOKENS" },
+          { prim: "CONS" },
+        ],
+      },
     }
 
     operations.push(spendOperation)
@@ -210,15 +270,17 @@ export class TezosKtProtocol extends TezosProtocol implements ICoinSubProtocol {
     try {
       const tezosWrappedOperation: TezosWrappedOperation = {
         branch,
-        contents: operations
+        contents: operations,
       }
 
-      const binaryTx: string = await this.forgeTezosOperation(tezosWrappedOperation)
+      const binaryTx: string = await this.forgeTezosOperation(
+        tezosWrappedOperation
+      )
 
       return { binaryTransaction: binaryTx }
     } catch (error) {
       console.warn(error.message)
-      throw new OperationFailedError(Domain.TEZOS, 'Forging Tezos TX failed.')
+      throw new OperationFailedError(Domain.TEZOS, "Forging Tezos TX failed.")
     }
   }
 }

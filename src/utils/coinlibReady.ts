@@ -1,6 +1,6 @@
-import * as sodium from 'libsodium-wrappers'
+import * as sodium from "libsodium-wrappers"
 
-const isCoinlibReady: () => Promise<boolean> = (): Promise<boolean> => {
+const isCoinlibReady: () => Promise<void> = (): Promise<void> => {
   return sodium.ready
 }
 

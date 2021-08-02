@@ -1,8 +1,8 @@
 import * as sapling from "@temple-wallet/sapling-wasm"
 import * as sodium from "libsodium-wrappers"
 
-import BigNumber from "../../../dependencies/src/bignumber.js-9.0.0/bignumber"
-import { mnemonicToSeed } from "../../../dependencies/src/bip39-2.5.0/index"
+import BigNumber from "bignumber.js"
+import { mnemonicToSeed } from "bip39"
 import {
   AirGapTransactionStatus,
   IAirGapTransaction,
@@ -172,9 +172,9 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
     derivationPath: string,
     password?: string | undefined
   ): Promise<string> {
-    const seed = mnemonicToSeed(mnemonic, password)
+    const seed = await mnemonicToSeed(mnemonic, password)
 
-    return this.getPublicKeyFromHexSecret(seed, derivationPath)
+    return this.getPublicKeyFromHexSecret(seed.toString("hex"), derivationPath)
   }
 
   public async getPrivateKeyFromMnemonic(
@@ -182,9 +182,9 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
     derivationPath: string,
     password?: string | undefined
   ): Promise<Buffer> {
-    const seed = mnemonicToSeed(mnemonic, password)
+    const seed = await mnemonicToSeed(mnemonic, password)
 
-    return this.getPrivateKeyFromHexSecret(seed, derivationPath)
+    return this.getPrivateKeyFromHexSecret(seed.toString("hex"), derivationPath)
   }
 
   public async getPublicKeyFromHexSecret(
@@ -456,7 +456,7 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
   public async getBalanceOfPublicKey(
     contractAddress: string,
     publicKey: string
-  ): Promise<string> {
+  ): Promise<BigNumber> {
     const saplingStateDiff: TezosSaplingStateDiff =
       await this.nodeClient.getSaplingStateDiff(contractAddress)
     const unspends: TezosSaplingInput[] = await this.bookkeeper.getUnspends(
@@ -470,7 +470,7 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
       new BigNumber(0)
     )
 
-    return balance.toString()
+    return balance
   }
 
   public async getTransactionStatuses(
@@ -484,7 +484,7 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
     publicKey: string,
     recipients: string[],
     fee?: string | undefined
-  ): Promise<string> {
+  ): Promise<BigNumber> {
     return this.getBalanceOfPublicKey(contractAddress, publicKey)
   }
 

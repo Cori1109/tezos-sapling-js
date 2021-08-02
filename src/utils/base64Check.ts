@@ -1,9 +1,9 @@
-import * as createHash from '../dependencies/src/create-hash-1.2.0/index'
-import { ConditionViolationError } from '../errors'
-import { Domain } from '../errors/coinlib-error'
+import createHash from "create-hash"
+import { ConditionViolationError } from "../errors"
+import { Domain } from "../errors/coinlib-error"
 
 const sha256hash = (input) => {
-  const hash = createHash('sha256')
+  const hash = createHash("sha256")
   hash.update(input)
 
   return hash.digest()
@@ -20,13 +20,16 @@ const bs64check = {
     }
 
     const checksum = checkSum(input)
-    const payloadWithChecksum = Buffer.concat([input, checksum], input.length + 4)
+    const payloadWithChecksum = Buffer.concat(
+      [input, checksum],
+      input.length + 4
+    )
 
-    return payloadWithChecksum.toString('base64')
+    return payloadWithChecksum.toString("base64")
   },
   decode(input: Buffer | string): any {
     if (!Buffer.isBuffer(input)) {
-      input = Buffer.from(input, 'base64')
+      input = Buffer.from(input, "base64")
     }
 
     const payload = input.slice(0, -4)
@@ -34,13 +37,21 @@ const bs64check = {
     const newChecksum = checkSum(payload)
 
     // tslint:disable-next-line:no-bitwise
-    if ((checksum[0] ^ newChecksum[0]) | (checksum[1] ^ newChecksum[1]) | (checksum[2] ^ newChecksum[2]) | (checksum[3] ^ newChecksum[3])) {
-      throw new ConditionViolationError(Domain.UTILS, 'bs64check checksum does not match')
+    if (
+      (checksum[0] ^ newChecksum[0]) |
+      (checksum[1] ^ newChecksum[1]) |
+      (checksum[2] ^ newChecksum[2]) |
+      (checksum[3] ^ newChecksum[3])
+    ) {
+      throw new ConditionViolationError(
+        Domain.UTILS,
+        "bs64check checksum does not match"
+      )
     }
 
     return payload
   },
-  checkSum
+  checkSum,
 }
 
 export default bs64check

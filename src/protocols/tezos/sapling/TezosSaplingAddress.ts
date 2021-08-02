@@ -4,7 +4,7 @@ import {
   getNextPaymentAddressFromViewingKey,
 } from "@temple-wallet/sapling-wasm"
 
-import * as bs58check from "../../../dependencies/src/bs58check-2.1.2/index"
+import * as bs58check from "bs58check"
 import { TezosAddress } from "../TezosAddress"
 import { TezosUtils } from "../TezosUtils"
 

@@ -1,7 +1,7 @@
 import * as sapling from "@temple-wallet/sapling-wasm"
 
 import { LazyAsync } from "../../../../data/Lazy"
-import BigNumber from "../../../../dependencies/src/bignumber.js-9.0.0/bignumber"
+import BigNumber from "bignumber.js"
 import { chunkedArray } from "../../../../utils/array"
 import {
   changeEndianness,
