@@ -460,9 +460,6 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
       saplingStateDiff.nullifiers
     )
 
-    console.log(saplingStateDiff)
-    console.log(unspends)
-
     const balance: BigNumber = unspends.reduce(
       (sum: BigNumber, next: TezosSaplingInput) => sum.plus(next.value),
       new BigNumber(0)
