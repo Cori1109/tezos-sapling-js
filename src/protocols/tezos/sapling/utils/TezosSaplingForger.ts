@@ -1,9 +1,9 @@
-import * as sapling from "@temple-wallet/sapling-wasm"
+import * as sapling from "@airgap/sapling-wasm"
 import {
   SaplingPartialOutputDescription,
   SaplingSpendDescription,
   SaplingUnsignedSpendDescription,
-} from "@temple-wallet/sapling-wasm"
+} from "@airgap/sapling-wasm"
 
 import BigNumber from "bignumber.js"
 import { blake2bAsBytes } from "../../../../utils/blake2b"

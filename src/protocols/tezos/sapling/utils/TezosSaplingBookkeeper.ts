@@ -1,4 +1,4 @@
-import * as sapling from "@temple-wallet/sapling-wasm"
+import * as sapling from "@airgap/sapling-wasm"
 
 import BigNumber from "bignumber.js"
 import { IAirGapTransaction } from "../../../../interfaces/IAirGapTransaction"
@@ -338,6 +338,8 @@ export class TezosSaplingBookkeeper {
       viewingKey,
       commitmentsWithCiphertext
     )
+    console.log("huinputs", inputs)
+
     const unspends: TezosSaplingInput[] = (
       await Promise.all(
         inputs.map(async (input: TezosSaplingInput) => {
@@ -367,6 +369,8 @@ export class TezosSaplingBookkeeper {
     viewingKey: Buffer | string,
     commitmentsWithCiphertext: [string, TezosSaplingCiphertext][]
   ): Promise<TezosSaplingInput[]> {
+    console.log("comms and cyphers", commitmentsWithCiphertext)
+    console.log("viewing key", viewingKey)
     const inputs: TezosSaplingInput[] = (
       await Promise.all(
         commitmentsWithCiphertext.map(
@@ -374,6 +378,7 @@ export class TezosSaplingBookkeeper {
             [commitment, ciphertext]: [string, TezosSaplingCiphertext],
             index: number
           ) => {
+            console.log("commitmentsWithCiphertext", index)
             const decrypted: [Buffer, TezosSaplingInput] | undefined =
               await this.getReceiverInputFromCiphertext(
                 Buffer.isBuffer(viewingKey)
@@ -382,6 +387,7 @@ export class TezosSaplingBookkeeper {
                 ciphertext,
                 new BigNumber(index)
               )
+            console.log("decrypted", decrypted)
             if (
               decrypted === undefined ||
               !(await this.verifyCommitment(decrypted[1], commitment))
@@ -406,12 +412,22 @@ export class TezosSaplingBookkeeper {
     position: BigNumber
   ): Promise<[Buffer, TezosSaplingInput] | undefined> {
     try {
+      console.log("getReceiverInputFromCiphertext")
       const { diversifier, amount, rcm, memo } =
         await this.cryptoClient.decryptCiphertextEnc(
           viewingKey,
           ciphertext,
           "receiver"
         )
+      console.log("decryptCiphertextEnc")
+
+      console.log(
+        "diversifier, amount, rcm, memo",
+        diversifier,
+        amount,
+        rcm,
+        memo
+      )
 
       const ivk: Buffer = await sapling.getIncomingViewingKey(viewingKey)
       const address: Buffer =
@@ -530,6 +546,10 @@ export class TezosSaplingBookkeeper {
     input: TezosSaplingInput,
     expectedCommitment: string
   ): Promise<boolean> {
+    console.log(
+      "raw address",
+      (await TezosSaplingAddress.fromValue(input.address)).raw
+    )
     return sapling.verifyCommitment(
       expectedCommitment,
       (await TezosSaplingAddress.fromValue(input.address)).raw,

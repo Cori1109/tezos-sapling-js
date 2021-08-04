@@ -2,7 +2,7 @@
 import {
   SaplingPartialOutputDescription,
   SaplingUnsignedSpendDescription,
-} from "@temple-wallet/sapling-wasm"
+} from "@airgap/sapling-wasm"
 import { ProtocolOptions } from "../../../utils/ProtocolOptions"
 import {
   MainProtocolSymbols,

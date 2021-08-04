@@ -2,7 +2,7 @@ import {
   getPaymentAddressFromViewingKey,
   SaplingPaymentAddress,
   getNextPaymentAddressFromViewingKey,
-} from "@temple-wallet/sapling-wasm"
+} from "@airgap/sapling-wasm"
 
 import * as bs58check from "bs58check"
 import { TezosAddress } from "../TezosAddress"

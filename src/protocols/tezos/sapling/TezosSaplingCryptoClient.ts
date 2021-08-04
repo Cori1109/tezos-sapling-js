@@ -1,6 +1,6 @@
-import * as sapling from "@temple-wallet/sapling-wasm"
-import { SaplingPartialOutputDescription } from "@temple-wallet/sapling-wasm"
-import * as sodium from "libsodium-wrappers"
+import * as sapling from "@airgap/sapling-wasm"
+import { SaplingPartialOutputDescription } from "@airgap/sapling-wasm"
+const sodium = require("libsodium-wrappers")
 
 import BigNumber from "bignumber.js"
 import { blake2bAsBytes } from "../../../utils/blake2b"
@@ -124,16 +124,23 @@ export class TezosSaplingCryptoClient extends Ed25519CryptoClient {
     mode: "sender" | "receiver" = "receiver",
     commitment?: Buffer | string
   ): Promise<PayloadEnc> {
+    console.log("waiting for soidum")
     await sodium.ready
+    console.log("soidum ready, really")
 
     let symKey: Buffer
     let rawAddressFromDiversifier: (diversifier: Buffer) => Promise<Buffer>
     if (mode === "receiver") {
+      console.log("crypto client 0")
+
       const ivk: Buffer = await sapling.getIncomingViewingKey(viewingKey)
       symKey = await this.getSymmetricKey(ciphertext.epk, ivk)
       rawAddressFromDiversifier = (diversifier: Buffer) =>
         sapling.getRawPaymentAddressFromIncomingViewingKey(ivk, diversifier)
+      console.log("crypto client 1")
     } else if (mode === "sender" && commitment !== undefined) {
+      console.log("crypto client 2")
+
       const { pkd, esk }: PayloadOut = await this.decryptCiphertextOut(
         viewingKey,
         ciphertext,
@@ -142,11 +149,30 @@ export class TezosSaplingCryptoClient extends Ed25519CryptoClient {
       symKey = await this.getSymmetricKey(pkd, esk)
       rawAddressFromDiversifier = (diversifier: Buffer) =>
         Promise.resolve(Buffer.concat([diversifier, pkd]))
+      console.log("crypto client 3")
     } else {
       throw new Error(
         "Not enough data has been provided to decrypt the ciphertext"
       )
     }
+
+    console.log("crypto client 4")
+
+    console.log(Buffer.from(ciphertext.payload_enc, "hex"))
+    console.log(Buffer.from(ciphertext.nonce_enc, "hex"))
+    console.log(symKey)
+    console.log(
+      "sodium generic hash",
+      sodium.crypto_generichash(32, sodium.from_string("dummy"))
+    )
+    console.log(
+      "sodium result",
+      sodium.crypto_secretbox_open_easy(
+        Buffer.from(ciphertext.payload_enc, "hex"),
+        Buffer.from(ciphertext.nonce_enc, "hex"),
+        symKey
+      )
+    )
 
     const decrypted: Buffer = Buffer.from(
       sodium.crypto_secretbox_open_easy(
@@ -155,6 +181,8 @@ export class TezosSaplingCryptoClient extends Ed25519CryptoClient {
         symKey
       )
     )
+
+    console.log("decrypted by sodium", decrypted)
 
     const diversifier: Buffer = decrypted.slice(0, 11)
     const amount: BigNumber = new BigNumber(

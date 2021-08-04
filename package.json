@@ -16,8 +16,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@airgap/sapling-wasm": "^0.0.6",
     "@taquito/local-forging": "^10.0.0",
-    "@temple-wallet/sapling-wasm": "^0.0.6",
     "axios": "^0.21.1",
     "b58": "^4.0.3",
     "big-integer": "^1.6.48",

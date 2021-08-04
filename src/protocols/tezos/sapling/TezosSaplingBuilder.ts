@@ -1,4 +1,4 @@
-import * as sapling from "@temple-wallet/sapling-wasm"
+import * as sapling from "@airgap/sapling-wasm"
 import * as sodium from "libsodium-wrappers"
 
 import BigNumber from "bignumber.js"
@@ -42,7 +42,6 @@ import { TezosOperationType } from "../types/TezosOperationType"
 import { TezosWrappedOperation } from "../types/TezosWrappedOperation"
 
 import { ITezosSaplingNodeClient } from "./node/ITezosSaplingNodeClient"
-import { TezosSaplingNodeMockupClient } from "./node/TezosSaplingNodeMockupClient"
 import { TezosSaplingNodeClient } from "./node/TezosSaplingNodeClient"
 import { TezosSaplingAddress } from "./TezosSaplingAddress"
 import { TezosSaplingCryptoClient } from "./TezosSaplingCryptoClient"
@@ -120,11 +119,7 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
       this.tezosProtocol.cryptoClient
     )
 
-    if (this.options.network.type == NetworkType.MOCKUP) {
-      this.nodeClient = new TezosSaplingNodeMockupClient()
-    } else {
-      this.nodeClient = new TezosSaplingNodeClient(this.options.network.rpcUrl)
-    }
+    this.nodeClient = new TezosSaplingNodeClient(this.options.network.rpcUrl)
 
     this.contract = new TezosContract(
       this.options.config.contractAddress,
@@ -464,6 +459,9 @@ export class TezosSaplingBuilder extends NonExtendedProtocol {
       saplingStateDiff.commitments_and_ciphertexts,
       saplingStateDiff.nullifiers
     )
+
+    console.log(saplingStateDiff)
+    console.log(unspends)
 
     const balance: BigNumber = unspends.reduce(
       (sum: BigNumber, next: TezosSaplingInput) => sum.plus(next.value),
